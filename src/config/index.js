@@ -1,21 +1,21 @@
-const env = import.meta.env.MODE || "prod" //获取当前环境模式，如果没有则默认开发模式
+const env = import.meta.env.MODE || "production" //获取当前环境模式，如果没有则默认开发模式
 const EnvConfig = {
-  dev: {
+  development: {
     baseApi: "/",
     //真实接口地址
     mockApi:
-      "https://www.fastmock.site/mock/c1c302e8baed9894c48c17e4738c092e/api",
+      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
     //模拟接口的地址
   },
   test: {
     baseApi: "//test.futurefe.com/api",
     mockApi:
-      "https://www.fastmock.site/mock/c1c302e8baed9894c48c17e4738c092e/api",
+      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
   },
-  prod: {
+  production: {
     baseApi: "//futurefe.com/api",
     mockApi:
-      "https://www.fastmock.site/mock/c1c302e8baed9894c48c17e4738c092e/api",
+      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
   },
 }
 export default {
