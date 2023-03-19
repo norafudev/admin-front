@@ -7,9 +7,13 @@
 <script>
 export default {
   mounted() {
+    // 测试axios
     this.$request({
       url: "/login",
     })
+
+    // 测试storage
+    this.$storage.setItem("name", "孙悟空")
   },
 
   methods: {
