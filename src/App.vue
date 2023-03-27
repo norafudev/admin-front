@@ -10,4 +10,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style>
+@import "./assets/style/reset.css";
+@import "./assets/style/common.scss";
+</style>

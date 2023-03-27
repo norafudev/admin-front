@@ -1,6 +1,7 @@
 <template>
-  <div>Welcome</div>
-  <router-link to="/login">去登陆</router-link>
+  <div>
+    <router-link to="/login">去登陆</router-link>
+  </div>
 </template>
 
 <script>
