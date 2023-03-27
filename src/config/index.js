@@ -4,18 +4,18 @@ const EnvConfig = {
     baseApi: "/",
     //真实接口地址
     mockApi:
-      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
+      "https://console-mock.apipost.cn/mock/befc349c-0be5-46ad-8304-440fc3f8665b",
     //模拟接口的地址
   },
   test: {
     baseApi: "//test.futurefe.com/api",
     mockApi:
-      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
+      "https://console-mock.apipost.cn/mock/befc349c-0be5-46ad-8304-440fc3f8665b",
   },
   production: {
     baseApi: "//futurefe.com/api",
     mockApi:
-      "https://www.fastmock.site/mock/599928d074d45ecc0baa8b667949d65c/api",
+      "https://console-mock.apipost.cn/mock/befc349c-0be5-46ad-8304-440fc3f8665b",
   },
 }
 export default {

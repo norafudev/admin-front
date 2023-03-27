@@ -20,7 +20,7 @@ const routes = [
       },
       {
         name: "login",
-        path: "/login", //子路由的path，不用再写父路由路径
+        path: "/login",
         meta: {
           title: "登录页",
         },
@@ -32,7 +32,7 @@ const routes = [
 
 const router = createRouter({
   routes,
-  history: createWebHashHistory(), //选择history方法改变路径
+  history: createWebHashHistory(),
 })
 
 export default router

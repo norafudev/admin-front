@@ -5,15 +5,14 @@
 </template>
 
 <script>
+import axios from "../utils/request"
 export default {
   mounted() {
     // 测试axios
-    this.$request({
-      url: "/login",
-    })
-
+    axios.get("/login")
     // 测试storage
     this.$storage.setItem("name", "孙悟空")
+    this.$storage.setItem("age", "18")
   },
 
   methods: {
