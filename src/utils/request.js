@@ -9,7 +9,7 @@ const NETWORK_ERROR = "网络请求异常，请稍后重试"
 
 // 创建axios实例，传入config，将作用于每个使用该axiso对象的请求
 const httpRequest = axios.create({
-  baseURL: globalConfig.mockApi,
+  baseURL: globalConfig.mock ? globalConfig.mockApi : globalConfig.baseApi,
   timeout: 8000,
 })
 

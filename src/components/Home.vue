@@ -31,7 +31,7 @@ export default {
     position: fixed;
     width: 200px;
     height: 100vh; //视口高度
-    background-color: rgba(107, 115, 176, 0.8);
+    background: linear-gradient(-45deg, #c2ceed, #899ae9);
     color: #fff;
     overflow-y: auto; //垂直滚动条
     transition: width 0.5s; //宽度变化（展开、收起侧边栏）有过度的效果
