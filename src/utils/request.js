@@ -26,8 +26,8 @@ httpRequest.interceptors.response.use((res) => {
   const { code, data, message } = res.data
   if (code === 200) {
     return data
-  } else if (code === 40001) {
-    //约定40001为token无效，跳转到登陆界面
+  } else if (code === 50001) {
+    //约定50001为token无效，跳转到登陆界面
     // 使用ElMesaage向用户提示错误信息
     ElMessage.error(TOKEN_INVALID)
     setTimeout(() => {

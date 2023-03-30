@@ -11,6 +11,5 @@ const app = createApp(App)
 
 // 注册全局方法
 app.config.globalProperties.$storage = storage
-app.config.globalProperties.$api = api
 
 app.use(router).use(ElementPlus).use(store).mount("#app")

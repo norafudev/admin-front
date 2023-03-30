@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="modal">
-      <el-form :model="user" :rules="rules" status-icon ref="userForm">
+      <el-form :model="user" :rules="rules" status-icon ref="userFormRef">
         <div class="title">Admin</div>
         <el-form-item prop="userName">
           <el-input type="text" :prefix-icon="User" v-model="user.userName" />
@@ -14,7 +14,10 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button class="btn-login" type="primary" @click="login"
+          <el-button
+            class="btn-login"
+            type="primary"
+            @click="login(userFormRef)"
             >提交</el-button
           >
         </el-form-item>
@@ -23,37 +26,47 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { User, View } from "@element-plus/icons-vue"
-export default {
-  data() {
-    return {
-      user: { userName: "", userPwd: "" },
-      rules: {
-        userName: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-        ],
-        userPwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
-      },
-      User,
-      View,
-    }
-  },
+import { reactive, ref } from "vue"
+import api from "../api"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
-  methods: {
-    login() {
-      this.$refs.userForm.validate((isValid) => {
-        if (isValid) {
-          this.$api
-            .login(this.user)
-            .then((res) => this.$store.commit("savaUserInfo", res))
-          this.$router.push("./welcome")
-        } else {
-          console.log("验证出错")
-        }
-      })
-    },
-  },
+const store = useStore()
+const router = useRouter()
+
+const user = reactive({
+  userName: "",
+  userPwd: "",
+})
+
+const rules = {
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  userPwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
+}
+
+const userFormRef = ref()
+
+function login(userForm) {
+  userForm.validate((isValid) => {
+    if (isValid) {
+      api
+        .login({
+          userName: user.userName,
+          userPwd: user.userPwd,
+        })
+        .then((res) => {
+          store.commit("saveUserInfo", res.data)
+          router.push("./welcome")
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else {
+      return false
+    }
+  })
 }
 </script>
 
