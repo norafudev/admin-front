@@ -12,31 +12,14 @@
       </div>
       <!-- 1.2 菜单 -->
       <el-menu
-        default-active="2"
+        :default-active="activeMenu"
         router
         class="nav-menu"
         text-color="#4f4d4d"
         :collapse="isCollapse"
         style="background: transparent"
       >
-        <el-sub-menu index="1">
-          <template #title>
-            <el-icon><setting /></el-icon>
-            <span>系统管理</span>
-          </template>
-          <el-menu-item index="1-1">用户管理</el-menu-item>
-          <el-menu-item index="1-2">菜单管理</el-menu-item>
-          <el-menu-item index="1-3">角色管理</el-menu-item>
-          <el-menu-item index="1-4">部门管理</el-menu-item>
-        </el-sub-menu>
-        <el-sub-menu index="2">
-          <template #title>
-            <el-icon><promotion /></el-icon>
-            <span>审批管理</span>
-          </template>
-          <el-menu-item index="1-1">休假申请</el-menu-item>
-          <el-menu-item index="1-2">待我审批</el-menu-item>
-        </el-sub-menu>
+        <tree-menu :menuList="menuList" />
       </el-menu>
     </div>
     <div :class="['main', isCollapse ? 'fold' : 'unfold']">
@@ -54,7 +37,7 @@
         <!-- 2.2 消息提醒，下拉菜单 -->
         <div class="user-info">
           <!-- 消息提醒 -->
-          <el-badge is-dot class="notice">
+          <el-badge :is-dot="noticeCount != 0" class="notice">
             <el-icon size="25" color="#90a0d3"><Bell /></el-icon>
           </el-badge>
           <!-- 下拉菜单 -->
@@ -67,9 +50,9 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item :icon="Avatar">{{
-                  userInfo.userEmail
-                }}</el-dropdown-item>
+                <el-dropdown-item :icon="Avatar"
+                  >{{ userInfo.userEmail }}
+                </el-dropdown-item>
                 <el-dropdown-item :icon="SwitchButton" @click="logout">
                   退出登录
                 </el-dropdown-item>
@@ -90,18 +73,12 @@
 </template>
 
 <script setup>
-import {
-  Setting,
-  Promotion,
-  Fold,
-  Bell,
-  ArrowDown,
-  Avatar,
-  SwitchButton,
-} from "@element-plus/icons-vue"
-import { reactive, ref } from "vue"
+import { ref, onMounted } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import api from "../api"
+import TreeMenu from "./TreeMenu.vue"
+import { Avatar, SwitchButton } from "@element-plus/icons-vue"
 
 const store = useStore()
 const router = useRouter()
@@ -112,11 +89,35 @@ const logout = () => {
   store.commit("saveUserInfo", "")
   router.push("/login")
 }
-
-const isCollapse = ref(true)
+// 折叠展开侧边栏
+const isCollapse = ref(false)
 const toggle = () => {
   isCollapse.value = !isCollapse.value
 }
+
+onMounted(() => {
+  getNoticeCount(), getMenuList()
+})
+// 通知数量
+const noticeCount = ref()
+const getNoticeCount = async () => {
+  try {
+    noticeCount.value = await api.noticeCount()
+  } catch (error) {
+    console.log(error)
+  }
+}
+// 菜单列表
+const menuList = ref([])
+const getMenuList = async () => {
+  try {
+    menuList.value = await api.menuList()
+  } catch (error) {
+    console.log(error)
+  }
+}
+// 激活的菜单
+const activeMenu = ref(location.pathname)
 </script>
 
 <style lang="scss">
@@ -191,6 +192,7 @@ const toggle = () => {
         align-items: center;
         .menu-fold {
           line-height: 0px;
+          cursor: pointer;
         }
         .braedcrump {
           margin-left: 20px;

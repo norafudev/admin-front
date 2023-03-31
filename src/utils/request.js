@@ -34,6 +34,12 @@ httpRequest.interceptors.response.use((res) => {
       router.push("./login")
     }, 10000)
     return Promise.reject(TOKEN_INVALID)
+  } else if (code === 40001) {
+    ElMessage.error("用户名或密码错误")
+    setTimeout(() => {
+      router.push("./login")
+    }, 10000)
+    return Promise.reject("用户名或密码错误")
   } else {
     return Promise.reject(NETWORK_ERROR)
   }
