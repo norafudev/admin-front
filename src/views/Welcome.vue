@@ -39,9 +39,9 @@
     }
   }
   .img {
-    background: url(../assets/images/bg.png) no-repeat center/cover;
-    width: 420px;
-    height: 360px;
+    background: url(../assets/images/bg.png) no-repeat center/contain;
+    width: 35vw;
+    height: 65vh;
   }
 }
 </style>
