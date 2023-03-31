@@ -1,11 +1,84 @@
 <template>
   <div class="container">
-    <div class="nav-side"></div>
-    <div class="main">
-      <div class="nav-top">
-        <div class="braedcrump">导航</div>
-        <div class="user">用户</div>
+    <!-- 1. 左侧菜单栏 -->
+    <div :class="['nav-side', isCollapse ? 'fold' : 'unfold']">
+      <!-- 1.1 系统logo -->
+      <div class="logo">
+        <img src="../assets/images/logo.png" class="avatar" />
+        <div>
+          <div class="username">{{ userInfo.userName || "游客" }}</div>
+          <div class="role">Admin</div>
+        </div>
       </div>
+      <!-- 1.2 菜单 -->
+      <el-menu
+        default-active="2"
+        router
+        class="nav-menu"
+        text-color="#4f4d4d"
+        :collapse="isCollapse"
+        style="background: transparent"
+      >
+        <el-sub-menu index="1">
+          <template #title>
+            <el-icon><setting /></el-icon>
+            <span>系统管理</span>
+          </template>
+          <el-menu-item index="1-1">用户管理</el-menu-item>
+          <el-menu-item index="1-2">菜单管理</el-menu-item>
+          <el-menu-item index="1-3">角色管理</el-menu-item>
+          <el-menu-item index="1-4">部门管理</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="2">
+          <template #title>
+            <el-icon><promotion /></el-icon>
+            <span>审批管理</span>
+          </template>
+          <el-menu-item index="1-1">休假申请</el-menu-item>
+          <el-menu-item index="1-2">待我审批</el-menu-item>
+        </el-sub-menu>
+      </el-menu>
+    </div>
+    <div :class="['main', isCollapse ? 'fold' : 'unfold']">
+      <!-- 2. 顶部导航栏 -->
+      <div class="nav-top">
+        <!-- 2.1 折叠按钮，面包屑-->
+        <div class="nav-top-left">
+          <!-- 折叠按钮 -->
+          <div class="menu-fold" @click="toggle">
+            <el-icon size="25" color="#90a0d3"><Fold /></el-icon>
+          </div>
+          <!-- 面包屑 -->
+          <div class="braedcrump">面包屑</div>
+        </div>
+        <!-- 2.2 消息提醒，下拉菜单 -->
+        <div class="user-info">
+          <!-- 消息提醒 -->
+          <el-badge is-dot class="notice">
+            <el-icon size="25" color="#90a0d3"><Bell /></el-icon>
+          </el-badge>
+          <!-- 下拉菜单 -->
+          <el-dropdown trigger="click" class="dropdown">
+            <span class="el-dropdown-link">
+              {{ userInfo.userName }}
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item :icon="Avatar">{{
+                  userInfo.userEmail
+                }}</el-dropdown-item>
+                <el-dropdown-item :icon="SwitchButton" @click="logout">
+                  退出登录
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+      </div>
+      <!-- 3. 内容区 -->
       <div class="wrapper">
         <div class="main-page">
           <!-- 给main-page设置样式，每个渲染在这里的组件都会生效该样式 -->
@@ -16,11 +89,33 @@
   </div>
 </template>
 
-<script>
-export default {
-  setup() {
-    return {}
-  },
+<script setup>
+import {
+  Setting,
+  Promotion,
+  Fold,
+  Bell,
+  ArrowDown,
+  Avatar,
+  SwitchButton,
+} from "@element-plus/icons-vue"
+import { reactive, ref } from "vue"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
+
+const store = useStore()
+const router = useRouter()
+
+let userInfo = store.state.userInfo
+
+const logout = () => {
+  store.commit("saveUserInfo", "")
+  router.push("/login")
+}
+
+const isCollapse = ref(true)
+const toggle = () => {
+  isCollapse.value = !isCollapse.value
 }
 </script>
 
@@ -29,23 +124,91 @@ export default {
   position: relative; //便于子盒绝对定位
   .nav-side {
     position: fixed;
-    width: 200px;
+    // width: 200px;
     height: 100vh; //视口高度
-    background: linear-gradient(-45deg, #c2ceed, #899ae9);
+    background: linear-gradient(-45deg, #c2ceed, #d2dcf5);
     color: #fff;
     overflow-y: auto; //垂直滚动条
     transition: width 0.5s; //宽度变化（展开、收起侧边栏）有过度的效果
+    // 折叠
+    &.fold {
+      width: 85px;
+    }
+    // 展开
+    &.unfold {
+      width: 200px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      height: 60px;
+      margin: 12px;
+      background-color: #f5f9fc;
+      border-radius: 10px;
+      .avatar {
+        width: 42px;
+        height: 42px;
+        margin: 0 21px 0 10px;
+        background-color: #dfe3e7;
+        border-radius: 40px;
+      }
+      .username {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #4f4d4d;
+      }
+      .role {
+        font-size: 12px;
+        color: #7a7d80;
+      }
+    }
+    .el-menu {
+      // background: transparent;
+      border-right: none;
+    }
   }
   .main {
     // 实现左右布局，左边固定，右边自适应；右盒子将margin-left设为做盒子的宽度
-    margin-left: 200px;
+    // margin-left: 200px;
+    &.fold {
+      margin-left: 85px;
+    }
+    &.unfold {
+      margin-left: 200px;
+    }
+    transition: margin-left 0.5s;
     .nav-top {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       height: 50px;
       line-height: 50px;
       border-bottom: 1px solid #ddd;
       padding: 0 20px;
+      .nav-top-left {
+        display: flex;
+        align-items: center;
+        .menu-fold {
+          line-height: 0px;
+        }
+        .braedcrump {
+          margin-left: 20px;
+        }
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        .notice {
+          margin-top: 18px;
+          // line-height: 0px;
+          margin-right: 20px;
+        }
+        .dropdown {
+          font-size: 15px;
+          cursor: pointer;
+        }
+      }
     }
     .wrapper {
       background-color: rgb(244, 246, 250);
