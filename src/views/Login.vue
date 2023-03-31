@@ -57,7 +57,7 @@ function login(userForm) {
           userPwd: user.userPwd,
         })
         .then((res) => {
-          store.commit("saveUserInfo", res.data)
+          store.commit("saveUserInfo", res)
           router.push("./welcome")
         })
         .catch((err) => {
