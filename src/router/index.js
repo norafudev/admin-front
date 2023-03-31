@@ -10,11 +10,29 @@ const routes = [
     children: [
       {
         name: "welcome",
-        path: "/welcome", //子路由的path，不用再写父路由路径
+        path: "welcome", //子路由路径不用再写父路由路径
         meta: {
           title: "欢迎页",
         },
-        component: () => import("../views/Welcome.vue"),
+        component: () => import("./../views/Welcome.vue"),
+      },
+      {
+        name: "user",
+        path: "user",
+        meta: {
+          title: "用户管理",
+        },
+        component: () => import("./../views/Welcome.vue"),
+        children: [
+          {
+            name: "info",
+            path: "info",
+            meta: {
+              title: "信息统计",
+            },
+            component: () => import("./../views/Welcome.vue"),
+          },
+        ],
       },
     ],
   },

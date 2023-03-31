@@ -32,7 +32,7 @@
             <el-icon size="25" color="#90a0d3"><Fold /></el-icon>
           </div>
           <!-- 面包屑 -->
-          <div class="braedcrump">面包屑</div>
+          <breadcrumb class="breadcrumb" />
         </div>
         <!-- 2.2 消息提醒，下拉菜单 -->
         <div class="user-info">
@@ -73,12 +73,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import api from "../api"
 import TreeMenu from "./TreeMenu.vue"
 import { Avatar, SwitchButton } from "@element-plus/icons-vue"
+import Breadcrumb from "./Breadcrumb.vue"
 
 const store = useStore()
 const router = useRouter()
@@ -96,7 +97,8 @@ const toggle = () => {
 }
 
 onMounted(() => {
-  getNoticeCount(), getMenuList()
+  getNoticeCount()
+  getMenuList()
 })
 // 通知数量
 const noticeCount = ref()
@@ -194,8 +196,10 @@ const activeMenu = ref(location.pathname)
           line-height: 0px;
           cursor: pointer;
         }
-        .braedcrump {
+        .breadcrumb {
           margin-left: 20px;
+          font-size: 16px;
+          // font-weight: bold;
         }
       }
       .user-info {
