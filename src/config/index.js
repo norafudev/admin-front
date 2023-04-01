@@ -20,7 +20,7 @@ const EnvConfig = {
 }
 export default {
   env,
-  mock: true,
+  mock: false,
   namedSpace: "manager",
   ...EnvConfig[env], //根据key：env取对应环境下的配置
 }

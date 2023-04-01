@@ -2,6 +2,7 @@ import axios from "axios"
 import globalConfig from "../config/index"
 import { ElMessage } from "element-plus"
 import router from "../router"
+import store from "../store"
 
 // 定义响应错误信息
 const TOKEN_INVALID = "Token认证失败，请重新登录"
@@ -17,7 +18,7 @@ const httpRequest = axios.create({
 httpRequest.interceptors.request.use((config) => {
   // 待改，后面写JWT时修改
   if (!config.headers.Authorization) {
-    config.headers.Authorization = "Bear token"
+    config.headers.Authorization = `Bearer ${store.state.userInfo.token}`
   }
   return config
 })
