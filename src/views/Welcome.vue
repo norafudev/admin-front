@@ -18,6 +18,7 @@
   align-items: center;
   height: 100%;
   padding: 0 100px;
+  background-color: #fff;
   .content {
     position: relative;
     bottom: 60px;

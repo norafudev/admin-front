@@ -63,10 +63,8 @@
       </div>
       <!-- 3. 内容区 -->
       <div class="wrapper">
-        <div class="main-page">
-          <!-- 给main-page设置样式，每个渲染在这里的组件都会生效该样式 -->
-          <router-view></router-view>
-        </div>
+        <!-- wrapper的样式，会作用于每个渲染在这里的组件 -->
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -85,7 +83,6 @@ const store = useStore()
 const router = useRouter()
 
 let userInfo = store.state.userInfo
-
 const logout = () => {
   store.commit("saveUserInfo", "")
   router.push("/login")
@@ -104,7 +101,7 @@ onMounted(() => {
 const noticeCount = ref()
 const getNoticeCount = async () => {
   try {
-    noticeCount.value = await api.noticeCount()
+    noticeCount.value = await api.getNoticeCount()
   } catch (error) {
     console.log(error)
   }
@@ -113,7 +110,7 @@ const getNoticeCount = async () => {
 const menuList = ref([])
 const getMenuList = async () => {
   try {
-    menuList.value = await api.menuList()
+    menuList.value = await api.getMenuList()
   } catch (error) {
     console.log(error)
   }
@@ -220,10 +217,6 @@ const activeMenu = ref(location.pathname)
       background-color: rgb(244, 246, 250);
       padding: 20px;
       height: calc(100vh - 50px); //使用计算属性，视口高度-nav_top
-      .main-page {
-        height: 100%;
-        background-color: #fff;
-      }
     }
   }
 }

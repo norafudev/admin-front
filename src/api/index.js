@@ -11,13 +11,18 @@ const api = {
   },
 
   // 获取通知数量
-  noticeCount() {
+  getNoticeCount() {
     return axios.get("/leave/count")
   },
 
   // 获取菜单列表
-  menuList() {
+  getMenuList() {
     return axios.get("/menu/list")
+  },
+
+  // 获取用户列表
+  getUserList(params) {
+    return axios.get("/users/list", { params: params })
   },
 }
 
