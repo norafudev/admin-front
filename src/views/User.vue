@@ -27,7 +27,7 @@
     <div class="base-table">
       <!-- 2.1 操作栏 -->
       <div class="action">
-        <el-button type="primary">新增</el-button>
+        <el-button type="primary" @click="dialogVisible = true">新增</el-button>
         <el-button type="danger" @click="handleBatchUsers">批量删除</el-button>
       </div>
       <!-- 2.2 列表 -->
@@ -42,6 +42,7 @@
           :key="item.prop"
           :prop="item.prop"
           :label="item.label"
+          :formatter="item.formatter"
         >
         </el-table-column>
         <el-table-column align="center" label="操作">
@@ -65,6 +66,58 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <!-- 3. 新增用户弹窗 -->
+    <el-dialog v-model="dialogVisible" title="新增用户" width="600">
+      <el-form :model="userForm" label-width="80" :rules="rules">
+        <el-form-item label="用户名" prop="userName">
+          <el-input
+            v-model="userForm.userName"
+            placeholder="请输入用户名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="userEmail">
+          <el-input
+            v-model="userForm.userEmail"
+            placeholder="请输入用户邮箱"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input
+            v-model="userForm.mobile"
+            placeholder="请输入手机号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="岗位" prop="job">
+          <el-input v-model="userForm.job" placeholder="请输入岗位"></el-input>
+        </el-form-item>
+        <el-form-item label="状态" prop="state">
+          <el-select v-model="userForm.state">
+            <el-option :value="1" label="在职"></el-option>
+            <el-option :value="2" label="离职"></el-option>
+            <el-option :value="3" label="试用期"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="系统角色" prop="roleList">
+          <el-select v-model="userForm.roleList">
+            <el-option></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属部门" prop="deptName">
+          <el-cascader
+            :options="[]"
+            :props="{ checkStrictly: true, value: '_id', label: 'deptName' }"
+            clearable
+        /></el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">
+            确认
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,9 +136,29 @@ const userList = ref()
 const pager = reactive({
   pageNum: 1,
   pageSize: 10,
-  total: 0,
 })
 const formRef = ref(null)
+const dialogVisible = ref(false)
+const rules = reactive({
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  userEmail: [
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    {
+      pattern: /^.+@[a-zA-Z0-9-]+\.([a-zA-Z0-9-]+)$/,
+      message: "请输入有效的邮箱",
+      trigger: "blur",
+    },
+  ],
+  mobile: [
+    {
+      pattern:
+        /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/,
+      message: "请输入有效的手机号码",
+      trigger: "blur",
+    },
+  ],
+  deptName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+})
 
 onMounted(() => {
   getUserList({ ...pager })
@@ -109,11 +182,32 @@ const handleReset = () => {
   formRef.value.resetFields()
 }
 
+// 新增用户
+const userForm = reactive({
+  userName: "",
+  userEmail: "",
+  mobile: "",
+  job: "",
+  state: 3,
+})
+
 const columns = [
   { label: "用户Id", prop: "userId" },
   { label: "用户名称", prop: "userName" },
-  { label: "用户角色", prop: "role" },
-  { label: "用户状态", prop: "state" },
+  {
+    label: "用户角色",
+    prop: "role",
+    formatter(row, column, cellValue) {
+      return { 0: "管理员", 1: "普通用户" }[cellValue]
+    },
+  },
+  {
+    label: "用户状态",
+    prop: "state",
+    formatter(row, column, cellValue) {
+      return { 1: "在职", 2: "离职", 3: "试用期" }[cellValue]
+    },
+  },
   { label: "注册时间", prop: "createTime" },
   { label: "最后登录", prop: "lastLoginTime" },
 ]
@@ -131,7 +225,7 @@ const handleDelete = async (row) => {
     // 刷新用户列表
     getUserList()
   } catch (error) {
-    console.log(error)
+    ElMessage.error("删除失败：", error)
   }
 }
 
@@ -147,13 +241,17 @@ const handleBatchUsers = async () => {
     ElMessage.error("请选择要删除的用户")
     return
   }
-  const res = await api.userDel(checkedUserIds.value)
-  if (res.nModified > 0) {
-    ElMessage.success("删除成功")
-    // 刷新列表
-    getUserList()
-  } else {
-    ElMessage.error("删除失败")
+  try {
+    const res = await api.userDel(checkedUserIds.value)
+    if (res.nModified > 0) {
+      ElMessage.success("删除成功")
+      // 刷新列表
+      getUserList()
+    } else {
+      ElMessage.error("删除失败")
+    }
+  } catch (error) {
+    ElMessage.error("删除失败：", error)
   }
 }
 
