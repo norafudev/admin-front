@@ -24,6 +24,11 @@ const api = {
   getUserList(params) {
     return axios.get("/users/list", { params: params })
   },
+
+  // 删除用户，参数为userId组成的数组
+  userDel(data) {
+    return axios.delete("/users/delete", { data: data })
+  },
 }
 
 export default api
