@@ -29,6 +29,21 @@ const api = {
   userDel(data) {
     return axios.delete("/users/delete", { data: data })
   },
+
+  // 获取角色列表
+  getRoleList() {
+    return axios.get("/roles/allList")
+  },
+
+  // 获取部门列表
+  getDeptList() {
+    return axios.get("/dept/list")
+  },
+
+  // 新增/编辑用户：action：add/edit
+  submitUser(data) {
+    return axios.post("/users/operate", data)
+  },
 }
 
 export default api

@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="modal">
-      <el-form :model="user" :rules="rules" status-icon ref="userFormRef">
+      <el-form :model="user" :rules="rules" status-icon ref="userForm">
         <div class="title">Admin</div>
         <el-form-item prop="userName">
           <el-input type="text" :prefix-icon="User" v-model="user.userName" />
@@ -14,10 +14,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button
-            class="btn-login"
-            type="primary"
-            @click="login(userFormRef)"
+          <el-button class="btn-login" type="primary" @click="login()"
             >提交</el-button
           >
         </el-form-item>
@@ -32,6 +29,7 @@ import { reactive, ref } from "vue"
 import api from "../api"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import { ElMessage } from "element-plus"
 
 const store = useStore()
 const router = useRouter()
@@ -46,10 +44,10 @@ const rules = {
   userPwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
 }
 
-const userFormRef = ref()
+const userForm = ref()
 
-function login(userForm) {
-  userForm.validate((isValid) => {
+function login() {
+  userForm.value.validate((isValid) => {
     if (isValid) {
       api
         .login({
@@ -61,7 +59,7 @@ function login(userForm) {
           router.push("./welcome")
         })
         .catch((err) => {
-          console.log(err)
+          ElMessage.error("登陆失败：", err)
         })
     } else {
       return false

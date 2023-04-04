@@ -2,7 +2,7 @@
   <div class="user-container">
     <!-- 1. 查询栏 -->
     <div class="query-form">
-      <el-form :inline="true" :model="user" ref="formRef">
+      <el-form :inline="true" :model="user" ref="queryForm">
         <el-form-item label="ID" prop="userId">
           <el-input v-model="user.userId" placeholder="请输入用户ID" />
         </el-form-item>
@@ -68,7 +68,12 @@
     </div>
     <!-- 3. 新增用户弹窗 -->
     <el-dialog v-model="dialogVisible" title="新增用户" width="600">
-      <el-form :model="userForm" label-width="80" :rules="rules">
+      <el-form
+        :model="userForm"
+        label-width="80"
+        :rules="rules"
+        ref="dialogForm"
+      >
         <el-form-item label="用户名" prop="userName">
           <el-input
             v-model="userForm.userName"
@@ -98,23 +103,29 @@
           </el-select>
         </el-form-item>
         <el-form-item label="系统角色" prop="roleList">
-          <el-select v-model="userForm.roleList">
-            <el-option></el-option>
+          <el-select v-model="userForm.roleList" multiple>
+            <el-option
+              v-for="role in roleList"
+              :key="role._id"
+              :label="role.roleName"
+              :value="role._id"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="所属部门" prop="deptName">
+        <el-form-item label="部门" prop="deptId">
           <el-cascader
-            :options="[]"
+            v-model="userForm.deptId"
+            placeholder="请选择所属部门"
+            :options="deptList"
             :props="{ checkStrictly: true, value: '_id', label: 'deptName' }"
             clearable
-        /></el-form-item>
+          ></el-cascader>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">
-            确认
-          </el-button>
+          <el-button @click="handleCancle">取消</el-button>
+          <el-button type="primary" @click="handleSubmit"> 确认 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -137,7 +148,7 @@ const pager = reactive({
   pageNum: 1,
   pageSize: 10,
 })
-const formRef = ref(null)
+const queryForm = ref(null)
 const dialogVisible = ref(false)
 const rules = reactive({
   userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
@@ -157,30 +168,8 @@ const rules = reactive({
       trigger: "blur",
     },
   ],
-  deptName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  deptId: [{ required: true, message: "请选择用户所属部门", trigger: "blur" }],
 })
-
-onMounted(() => {
-  getUserList({ ...pager })
-})
-
-const getUserList = async (params) => {
-  try {
-    const { page, list } = await api.getUserList(params)
-    pager.total = page.total
-    userList.value = list
-  } catch (error) {
-    console.log(error)
-  }
-}
-//  查询表单
-const handleQuery = () => {
-  getUserList({ ...user })
-}
-// 重置
-const handleReset = () => {
-  formRef.value.resetFields()
-}
 
 // 新增用户
 const userForm = reactive({
@@ -190,6 +179,36 @@ const userForm = reactive({
   job: "",
   state: 3,
 })
+// 角色列表
+const roleList = ref([])
+// 部门列表
+const deptList = ref([])
+
+const dialogForm = ref(null)
+
+onMounted(() => {
+  getUserList({ ...pager })
+  getRoleList()
+  getDeptList()
+})
+
+const getUserList = async (params) => {
+  try {
+    const { page, list } = await api.getUserList(params)
+    pager.total = page.total
+    userList.value = list
+  } catch (error) {
+    ElMessage.error("获取用户列表失败：", error)
+  }
+}
+//  查询表单
+const handleQuery = () => {
+  getUserList({ ...user })
+}
+// 重置
+const handleReset = () => {
+  queryForm.value.resetFields()
+}
 
 const columns = [
   { label: "用户Id", prop: "userId" },
@@ -217,6 +236,7 @@ const handleCurrentChange = (current) => {
   getUserList({ pageNum: current })
 }
 
+// -------------删除用户--------------
 // 用户单个删除
 const handleDelete = async (row) => {
   try {
@@ -253,6 +273,48 @@ const handleBatchUsers = async () => {
   } catch (error) {
     ElMessage.error("删除失败：", error)
   }
+}
+
+// ------------新增用户---------------
+
+// 获取角色列表
+const getRoleList = async () => {
+  try {
+    roleList.value = await api.getRoleList()
+  } catch (error) {
+    ElMessage.error("角色列表获取失败：", error)
+  }
+}
+// 获取部门列表表
+const getDeptList = async () => {
+  try {
+    deptList.value = await api.getDeptList()
+  } catch (error) {
+    ElMessage.error("角色列表获取失败：", error)
+  }
+}
+// 取消按钮：关闭弹窗，重置表单
+const handleCancle = () => {
+  dialogVisible.value = false
+  dialogForm.value.resetFields()
+}
+// 提交按钮
+const handleSubmit = () => {
+  dialogForm.value.validate((isValid) => {
+    if (isValid) {
+      api
+        .submitUser({ ...userForm, action: "add" })
+        .then((res) => {
+          dialogVisible.value = false
+          dialogForm.value.resetFields()
+          ElMessage.success("用户创建成功")
+          getUserList()
+        })
+        .catch((err) => ElMessage.error(err))
+    } else {
+      ElMessage.error("创建失败，请检查表单")
+    }
+  })
 }
 
 const handleEdit = (row) => {
