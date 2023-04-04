@@ -27,7 +27,7 @@
     <div class="base-table">
       <!-- 2.1 操作栏 -->
       <div class="action">
-        <el-button type="primary" @click="dialogVisible = true">新增</el-button>
+        <el-button type="primary" @click="handleCreate">新增</el-button>
         <el-button type="danger" @click="handleBatchUsers">批量删除</el-button>
       </div>
       <!-- 2.2 列表 -->
@@ -133,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, onMounted, nextTick } from "vue"
 import api from "../api"
 import { ElMessage } from "element-plus"
 
@@ -172,13 +172,16 @@ const rules = reactive({
 })
 
 // 新增用户
-const userForm = reactive({
+let userForm = reactive({
   userName: "",
   userEmail: "",
   mobile: "",
   job: "",
   state: 3,
 })
+// action决定add新增还是edit编辑用户
+let action = ref("add")
+
 // 角色列表
 const roleList = ref([])
 // 部门列表
@@ -204,6 +207,11 @@ const getUserList = async (params) => {
 //  查询表单
 const handleQuery = () => {
   getUserList({ ...user })
+}
+// 新增
+const handleCreate = () => {
+  action.value = "add"
+  dialogVisible.value = true
 }
 // 重置
 const handleReset = () => {
@@ -303,11 +311,13 @@ const handleSubmit = () => {
   dialogForm.value.validate((isValid) => {
     if (isValid) {
       api
-        .submitUser({ ...userForm, action: "add" })
+        .submitUser({ ...userForm, action: action.value })
         .then((res) => {
           dialogVisible.value = false
           dialogForm.value.resetFields()
-          ElMessage.success("用户创建成功")
+          ElMessage.success(
+            action.value === "add" ? "用户创建成功" : "用户修改成功"
+          )
           getUserList()
         })
         .catch((err) => ElMessage.error(err))
@@ -317,8 +327,15 @@ const handleSubmit = () => {
   })
 }
 
+// ------------编辑用户---------------
 const handleEdit = (row) => {
-  console.log(index, row)
+  action.value = "edit"
+  dialogVisible.value = true
+  // 在弹窗渲染完成后再浅拷贝，否则表单初始值会被改变
+  nextTick(() => {
+    //target：userForm；source：row
+    userForm = Object.assign(userForm, row)
+  })
 }
 </script>
 
