@@ -7,7 +7,8 @@ import axios from "./../utils/request"
 const api = {
   // 登录
   login(data) {
-    return axios.post("/users/login", data)
+    // return axios.post("/users/login", data)
+    return axios.post("/users/login", data, { baseURL: "/api" })
   },
 
   // 获取通知数量
@@ -22,12 +23,14 @@ const api = {
 
   // 获取用户列表
   getUserList(params) {
-    return axios.get("/users/list", { params: params })
+    // return axios.get("/users/list", { params: params })
+    return axios.get("/users/list", { baseURL: "/api", params: params })
   },
 
   // 删除用户，参数为userId组成的数组
   userDel(data) {
-    return axios.delete("/users/delete", { data: data })
+    // return axios.delete("/users/delete", { data: data })
+    return axios.post("/users/delete", data, { baseURL: "/api" })
   },
 
   // 获取角色列表

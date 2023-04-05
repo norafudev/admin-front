@@ -136,6 +136,7 @@
 import { ref, reactive, onMounted, nextTick } from "vue"
 import api from "../api"
 import { ElMessage } from "element-plus"
+import formatDate from "../utils/formatDate"
 
 const user = reactive({
   userId: "",
@@ -148,6 +149,36 @@ const pager = reactive({
   pageNum: 1,
   pageSize: 10,
 })
+const columns = [
+  { label: "用户Id", prop: "userId" },
+  { label: "用户名称", prop: "userName" },
+  {
+    label: "用户角色",
+    prop: "role",
+    formatter(row, column, cellValue) {
+      return { 0: "管理员", 1: "普通用户" }[cellValue]
+    },
+  },
+  {
+    label: "用户状态",
+    prop: "state",
+    formatter(row, column, cellValue) {
+      return { 1: "在职", 2: "离职", 3: "试用期" }[cellValue]
+    },
+  },
+  {
+    label: "注册时间",
+    prop: "createTime",
+    formatter: (row, column, cellValue) =>
+      formatDate(new Date(cellValue), "yyyy-MM-dd"),
+  },
+  {
+    label: "最后登录",
+    prop: "lastLoginTime",
+    formatter: (row, column, cellValue) =>
+      formatDate(new Date(cellValue), "yyyy-MM-dd"),
+  },
+]
 const queryForm = ref(null)
 const dialogVisible = ref(false)
 const rules = reactive({
@@ -216,28 +247,8 @@ const handleCreate = () => {
 // 重置
 const handleReset = () => {
   queryForm.value.resetFields()
+  getUserList()
 }
-
-const columns = [
-  { label: "用户Id", prop: "userId" },
-  { label: "用户名称", prop: "userName" },
-  {
-    label: "用户角色",
-    prop: "role",
-    formatter(row, column, cellValue) {
-      return { 0: "管理员", 1: "普通用户" }[cellValue]
-    },
-  },
-  {
-    label: "用户状态",
-    prop: "state",
-    formatter(row, column, cellValue) {
-      return { 1: "在职", 2: "离职", 3: "试用期" }[cellValue]
-    },
-  },
-  { label: "注册时间", prop: "createTime" },
-  { label: "最后登录", prop: "lastLoginTime" },
-]
 
 // 分页
 const handleCurrentChange = (current) => {
@@ -248,7 +259,7 @@ const handleCurrentChange = (current) => {
 // 用户单个删除
 const handleDelete = async (row) => {
   try {
-    await api.userDel([row.userId])
+    await api.userDel({ userIds: [row.userId] })
     ElMessage.success("删除成功")
     // 刷新用户列表
     getUserList()
@@ -270,7 +281,7 @@ const handleBatchUsers = async () => {
     return
   }
   try {
-    const res = await api.userDel(checkedUserIds.value)
+    const res = await api.userDel({ userIds: checkedUserIds.value })
     if (res.nModified > 0) {
       ElMessage.success("删除成功")
       // 刷新列表
