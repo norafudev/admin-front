@@ -27,7 +27,7 @@ httpRequest.interceptors.response.use((res) => {
   const { code, data, message } = res.data
   if (code === 200) {
     return data
-  } else if (code === 50001) {
+  } else if (code === 500001) {
     //约定50001为token无效，跳转到登陆界面
     // 使用ElMesaage向用户提示错误信息
     ElMessage.error(TOKEN_INVALID)
@@ -35,6 +35,9 @@ httpRequest.interceptors.response.use((res) => {
       router.push("./login")
     }, 1500)
     return Promise.reject(TOKEN_INVALID)
+  } else if (code === 20001) {
+    ElMessage.error("账号或密码错误")
+    return Promise.reject("账号或密码错误")
   } else if (code === 40001) {
     ElMessage.error("业务请求失败")
     return Promise.reject("业务请求失败")

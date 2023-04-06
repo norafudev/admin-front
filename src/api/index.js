@@ -45,7 +45,8 @@ const api = {
 
   // 新增/编辑用户：action：add/edit
   submitUser(data) {
-    return axios.post("/users/operate", data)
+    // return axios.post("/users/operate", data)
+    return axios.post("/users/operate", data, { baseURL: "/api" })
   },
 }
 
