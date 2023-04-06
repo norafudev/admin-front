@@ -48,6 +48,12 @@ const api = {
     // return axios.post("/users/operate", data)
     return axios.post("/users/operate", data, { baseURL: "/api" })
   },
+
+  // 创建、编辑、删除菜单
+  submitMenu(data) {
+    return axios.post("menu/operate", data)
+    return axios.post("menu/operate", data, { baseURL: "/api" })
+  },
 }
 
 export default api
