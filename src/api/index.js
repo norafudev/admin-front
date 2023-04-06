@@ -17,8 +17,8 @@ const api = {
   },
 
   // 获取菜单列表
-  getMenuList() {
-    return axios.get("/menu/list")
+  getMenuList(params) {
+    return axios.get("/menu/list", { params: params })
   },
 
   // 获取用户列表

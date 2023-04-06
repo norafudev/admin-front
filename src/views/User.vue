@@ -43,6 +43,7 @@
           :prop="item.prop"
           :label="item.label"
           :formatter="item.formatter"
+          sortable
         >
         </el-table-column>
         <el-table-column align="center" label="操作">
