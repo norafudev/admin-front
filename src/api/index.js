@@ -18,7 +18,8 @@ const api = {
 
   // 获取菜单列表
   getMenuList(params) {
-    return axios.get("/menu/list", { params: params })
+    // return axios.get("/menu/list", { params: params })
+    return axios.get("/menu/list", { baseURL: "/api", params: params })
   },
 
   // 获取用户列表
@@ -51,7 +52,7 @@ const api = {
 
   // 创建、编辑、删除菜单
   submitMenu(data) {
-    return axios.post("menu/operate", data)
+    // return axios.post("menu/operate", data)
     return axios.post("menu/operate", data, { baseURL: "/api" })
   },
 }

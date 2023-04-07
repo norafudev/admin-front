@@ -14,7 +14,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleQuery">查询</el-button>
-          <el-button @click="handleReset('form')">重置</el-button>
+          <el-button @click="handleReset()">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -22,7 +22,7 @@
     <div class="base-table">
       <!-- 2.1 操作栏 -->
       <div class="action">
-        <el-button type="primary" @click="handleAdd(create)">创建</el-button>
+        <el-button type="primary" @click="handleAdd(1)">创建</el-button>
       </div>
       <!-- 2.2 列表 -->
       <el-table :data="menuList" row-key="_id">
@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column label="操作" width="280" align="center">
           <template #default="scope">
-            <el-button @click="handleAdd('add', scope.row)">新增</el-button>
+            <el-button @click="handleAdd(2, scope.row)">新增</el-button>
             <el-button @click="handleEdit(scope.row)">编辑</el-button>
             <el-button type="danger" @click="handleDel(scope.row)"
               >删除</el-button
@@ -176,7 +176,7 @@ const menuForm = reactive({
   menuType: 1,
   menuState: 1,
 })
-// 表单操作，create-新增，edit-编辑，delete-删除
+// 表单操作，add-新增，edit-编辑，delete-删除
 let action = ""
 // 表单校验规则
 const rules = reactive({
@@ -185,6 +185,8 @@ const rules = reactive({
     { min: 2, max: 8, message: "菜单名称为2-8个字符", trigger: "blur" },
   ],
 })
+// 查询表单元素
+const form = ref(null)
 // 弹窗表单元素
 const dialogForm = ref(null)
 
@@ -207,24 +209,23 @@ const handleQuery = () => {
 }
 
 // 重置表单
-const handleReset = (form) => {
+const handleReset = () => {
   form.value.resetFields()
+  getMenuList()
 }
 
 // 创建/新增菜单
 const handleAdd = (type, row) => {
   dialogVisible.value = true
-  action = "create"
-  if (type === "add") {
-    // 将当前的菜单填写到表单中
+  action = "add"
+  if (type === 2) {
+    // 将当前菜单填写到表单中的父级菜单栏
     nextTick(() => {
       //一级菜单的parentId为null，需要过滤掉null
       menuForm.parentId = [...row.parentId, row._id].filter((item) => item)
     })
   }
 }
-const handleEdit = () => {}
-const handleDel = () => {}
 
 // 提交表单
 const handleSubmit = () => {
@@ -245,6 +246,24 @@ const handleSubmit = () => {
 const handleCancle = () => {
   dialogVisible.value = false
   handleReset(dialogForm)
+}
+
+// 编辑菜单
+const handleEdit = (row) => {
+  dialogVisible.value = true
+  action = "edit"
+  nextTick(() => {
+    // 浅拷贝，不改变目标对象的引用，保留响应性
+    Object.assign(menuForm, row)
+  })
+}
+
+// 删除菜单
+const handleDel = (row) => {
+  action = "delete"
+  api.submitMenu({ _id: row._id, action })
+  getMenuList()
+  ElMessage.success("删除成功")
 }
 </script>
 
