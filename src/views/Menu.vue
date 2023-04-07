@@ -175,6 +175,7 @@ let dialogVisible = ref(false)
 const menuForm = reactive({
   menuType: 1,
   menuState: 1,
+  parentId: [null],
 })
 // 表单操作，add-新增，edit-编辑，delete-删除
 let action = ""
@@ -209,9 +210,13 @@ const handleQuery = () => {
 }
 
 // 重置表单
-const handleReset = () => {
+const resetForm = (form) => {
   form.value.resetFields()
   getMenuList()
+}
+
+const handleReset = () => {
+  resetForm(form)
 }
 
 // 创建/新增菜单
@@ -234,7 +239,7 @@ const handleSubmit = () => {
       let res = await api.submitMenu({ ...menuForm, action })
       dialogVisible.value = false
       ElMessage.success("操作成功")
-      handleReset(dialogForm)
+      resetForm(dialogForm)
       getMenuList()
       return
     }
@@ -245,7 +250,7 @@ const handleSubmit = () => {
 // 取消表单提交
 const handleCancle = () => {
   dialogVisible.value = false
-  handleReset(dialogForm)
+  resetForm(dialogForm)
 }
 
 // 编辑菜单

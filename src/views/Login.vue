@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="modal">
       <el-form :model="user" :rules="rules" status-icon ref="userForm">
-        <div class="title">Admin</div>
+        <div class="title">后台管理系统</div>
         <el-form-item prop="userName">
           <el-input type="text" :prefix-icon="User" v-model="user.userName" />
         </el-form-item>
@@ -84,9 +84,9 @@ function login() {
     border-radius: 10px;
     box-shadow: 0px 0px 10px 3px #c7c9cb4d;
     .title {
-      font-size: 30px;
+      font-size: 25px;
       line-height: 1.5;
-      color: rgb(17, 24, 39);
+      color: rgba(17, 24, 39, 0.77);
       text-align: center;
       margin-bottom: 30px;
     }
