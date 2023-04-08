@@ -79,6 +79,32 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 4. 权限控制弹窗 -->
+    <el-dialog v-model="permissionVisible" title="权限控制" width="500">
+      <el-form label-width="100">
+        <el-form-item label="角色名称：">
+          {{ currentRoleName }}
+        </el-form-item>
+        <el-form-item label="选择权限：">
+          <el-tree
+            :data="menuList"
+            ref="treeRef"
+            show-checkbox
+            default-expand-all
+            node-key="_id"
+            :props="{ label: 'menuName' }"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="permissionVisible = false">取消</el-button>
+          <el-button type="primary" @click="handlePermissonSubmit">
+            确认
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -114,6 +140,11 @@ const rules = reactive({
   roleName: [{ required: true, message: "请输入用户名称", trigger: "blur" }],
 })
 let action = ""
+const permissionVisible = ref(false)
+let currentRoleName = ref()
+let menuList = []
+const treeRef = ref(null)
+let currentId = ""
 
 const handleQuery = () => {
   getRoleList({ ...queryForm, ...pager })
@@ -196,6 +227,45 @@ const handleSubmit = () => {
 const handleCancle = () => {
   resetForm(dialogForm)
   dialogVisible.value = false
+}
+
+const handlePermisson = (row) => {
+  permissionVisible.value = true
+  currentRoleName.value = row.roleName
+  currentId = row._id
+  setTimeout(() => {
+    treeRef.value.setCheckedKeys(row.permissionList.checkedKeys)
+  })
+}
+
+const handlePermissonSubmit = () => {
+  let nodes = treeRef.value.getCheckedNodes()
+  let halfKeys = treeRef.value.getHalfCheckedKeys()
+  let checkedKeys = []
+  let parentKeys = []
+  nodes.map((node) => {
+    if (!node.children) {
+      checkedKeys.push(node._id)
+    } else {
+      parentKeys.push(node._id)
+    }
+  })
+  let data = {
+    _id: currentId,
+    permissionList: {
+      checkedKeys,
+      halfCheckedKeys: [...halfKeys, ...parentKeys],
+    },
+  }
+  api
+    .updateRolePermission(data)
+    .then((res) => {
+      ElMessage.success("权限设置成功")
+    })
+    .catch((err) => {
+      ElMessage.error("权限设置失败：" + err)
+    })
+  permissionVisible.value = false
 }
 </script>
 

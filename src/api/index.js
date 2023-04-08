@@ -60,6 +60,11 @@ const api = {
   submitRole(data) {
     return axios.post("roles/operate", data)
   },
+
+  // 设置角色权限
+  updateRolePermission(data) {
+    return axios.post("/roles/update/permission", data)
+  },
 }
 
 export default api
