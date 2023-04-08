@@ -32,7 +32,7 @@ httpRequest.interceptors.response.use((res) => {
     // 使用ElMesaage向用户提示错误信息
     ElMessage.error(TOKEN_INVALID)
     setTimeout(() => {
-      router.push("./login")
+      router.push("/login")
     }, 1500)
     return Promise.reject(TOKEN_INVALID)
   } else if (code === 20001) {
