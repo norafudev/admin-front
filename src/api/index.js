@@ -18,7 +18,7 @@ const api = {
 
   // 获取菜单列表
   getMenuList(params) {
-    // return axios.get("/menu/list", { params: params })
+    return axios.get("/menu/list", { params: params })
     return axios.get("/menu/list", { baseURL: "/api", params: params })
   },
 
@@ -35,8 +35,8 @@ const api = {
   },
 
   // 获取角色列表
-  getRoleList() {
-    return axios.get("/roles/allList")
+  getRoleList(params) {
+    return axios.get("/roles/list", { params: params })
   },
 
   // 获取部门列表
@@ -54,6 +54,11 @@ const api = {
   submitMenu(data) {
     // return axios.post("menu/operate", data)
     return axios.post("menu/operate", data, { baseURL: "/api" })
+  },
+
+  // 创建、编辑、删除角色
+  submitRole(data) {
+    return axios.post("roles/operate", data)
   },
 }
 
