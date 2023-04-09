@@ -28,6 +28,7 @@
           :label="item.label"
           :prop="item.prop"
           :formatter="item.formatter"
+          :width="width"
         >
         </el-table-column>
         <el-table-column width="280" align="center" label="操作">
@@ -109,7 +110,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, nextTick } from "vue"
+import { reactive, ref, onMounted, nextTick, onUpdated } from "vue"
 import api from "../api"
 import formatDate from "../utils/formatDate"
 import { ElMessage } from "element-plus"
@@ -120,7 +121,20 @@ const roleList = ref([])
 const columns = [
   { label: "角色名称", prop: "roleName" },
   { label: "备注", prop: "remark" },
-  { label: "权限列表", prop: "menuCode" },
+  {
+    label: "权限列表",
+    prop: "permissionList",
+    width: 250,
+    formatter: (row, column, value) => {
+      let names = []
+      let list = value.halfCheckedKeys || []
+      list.map((key) => {
+        let name = actionMap[key]
+        if (key && name) names.push(name)
+      })
+      return names.join(" ")
+    },
+  },
   {
     label: "创建时间",
     prop: "createTime",
@@ -140,6 +154,7 @@ const rules = reactive({
   roleName: [{ required: true, message: "请输入用户名称", trigger: "blur" }],
 })
 let action = ""
+let _id
 const permissionVisible = ref(false)
 let currentRoleName = ref()
 let menuList = []
@@ -147,10 +162,11 @@ const treeRef = ref(null)
 let currentId = ""
 
 const handleQuery = () => {
-  getRoleList({ ...queryForm, ...pager })
+  getRoleList({ ...pager, ...queryForm })
 }
 const handleReset = () => {
   resetForm(formRef)
+  getRoleList()
 }
 
 const resetForm = (form) => {
@@ -164,7 +180,7 @@ onMounted(() => {
 
 const getRoleList = async (params) => {
   try {
-    const { list, page } = await api.getRoleList(params)
+    const { page, list } = await api.getRoleList(params)
     roleList.value = list
     pager.total = page.total
   } catch (err) {
@@ -175,6 +191,7 @@ const getRoleList = async (params) => {
 const getMenuList = async () => {
   try {
     menuList = await api.getMenuList()
+    getActionMap(menuList)
   } catch (err) {
     throw new Error(err)
   }
@@ -187,15 +204,16 @@ const handleAdd = () => {
 const handleEdit = (row) => {
   dialogVisible.value = true
   action = "edit"
+  _id = row._id
   nextTick(() => {
     Object.assign(roleForm, row)
   })
 }
 const handleDelete = (row) => {
   action = "delete"
-  let id = row._id
+  _id = row._id
   api
-    .submitRole({ id, action })
+    .submitRole({ _id, action })
     .then((res) => ElMessage.success("删除成功"))
     .catch((err) => {
       ElMessage.error("删除失败")
@@ -206,11 +224,13 @@ const handleDelete = (row) => {
 const handleCurrentChange = (current) => {
   getRoleList({ pageNum: current })
 }
+
+// 角色创建、编辑、删除
 const handleSubmit = () => {
   dialogForm.value.validate((isValid) => {
     if (isValid) {
       api
-        .submitRole({ action, ...roleForm })
+        .submitRole({ _id, action, ...roleForm })
         .then(() => {
           dialogVisible.value = false
           getRoleList()
@@ -260,12 +280,30 @@ const handlePermissonSubmit = () => {
   api
     .updateRolePermission(data)
     .then((res) => {
+      getMenuList()
       ElMessage.success("权限设置成功")
     })
     .catch((err) => {
       ElMessage.error("权限设置失败：" + err)
     })
   permissionVisible.value = false
+}
+// 菜单映射表
+let actionMap = reactive({})
+// 获得key值与menuName的映射
+const getActionMap = (menuList) => {
+  const deep = (menuList) => {
+    menuList.map((item) => {
+      // 不显示顶级菜单，只有二级菜单才有action
+      if (item.action) {
+        actionMap[item._id] = item.menuName
+      }
+      if (item.children) {
+        deep(item.children)
+      }
+    })
+  }
+  deep(menuList)
 }
 </script>
 

@@ -223,7 +223,7 @@ const dialogForm = ref(null)
 
 onMounted(() => {
   getUserList({ ...pager })
-  getRoleList()
+  getRoleName()
   getDeptList()
 })
 
@@ -298,9 +298,9 @@ const handleBatchUsers = async () => {
 // ------------新增用户---------------
 
 // 获取角色列表
-const getRoleList = async () => {
+const getRoleName = async () => {
   try {
-    roleList.value = await api.getRoleList()
+    roleList.value = await api.getRoleName()
   } catch (error) {
     ElMessage.error("角色列表获取失败：", error)
   }
