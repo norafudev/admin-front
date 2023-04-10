@@ -42,7 +42,8 @@ const api = {
 
   // 获取部门列表
   getDeptList(params) {
-    return axios.get("/dept/list", { params: params })
+    // return axios.get("/dept/list", { params: params })
+    return axios.get("/dept/list", { baseURL: "/api", params: params })
   },
 
   // 新增/编辑用户：action：add/edit
@@ -77,12 +78,14 @@ const api = {
 
   // 创建、编辑、删除部门
   deptOperate(data) {
-    return axios.post("/dept/operate", data)
+    // return axios.post("/dept/operate", data)
+    return axios.post("/dept/operate", data, { baseURL: "/api" })
   },
 
-  // 负责人
+  // 创建部门时，获取负责人列表
   getAllUserList() {
-    return axios.get("/users/all/list")
+    // return axios.get("/users/all/list")
+    return axios.get("/users/all/list", { baseURL: "/api" })
   },
 }
 

@@ -132,7 +132,7 @@ export default {
       },
       action: "create",
       showModal: false,
-      deptForm: {},
+      deptForm: { parentId: [null] },
       userList: [],
       rules: {
         parentId: [
@@ -211,11 +211,9 @@ export default {
           let params = { ...this.deptForm, action: this.action }
           delete params.user
           let res = await api.deptOperate(params)
-          if (res) {
-            this.$message.success("操作成功")
-            this.handleClose()
-            this.getDeptList()
-          }
+          this.$message.success("操作成功")
+          this.handleClose()
+          this.getDeptList()
         }
       })
     },
