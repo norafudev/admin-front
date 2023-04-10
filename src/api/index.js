@@ -74,6 +74,16 @@ const api = {
     // return axios.get("/roles/list", { params: params })
     return axios.get("/roles/list", { baseURL: "/api", params: params })
   },
+
+  // 创建、编辑、删除部门
+  deptOperate(data) {
+    return axios.post("/dept/operate", data)
+  },
+
+  // 负责人
+  getAllUserList() {
+    return axios.get("/users/all/list")
+  },
 }
 
 export default api

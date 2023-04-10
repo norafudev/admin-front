@@ -28,7 +28,6 @@
           :label="item.label"
           :prop="item.prop"
           :formatter="item.formatter"
-          :width="width"
         >
         </el-table-column>
         <el-table-column width="280" align="center" label="操作">
@@ -124,7 +123,6 @@ const columns = [
   {
     label: "权限列表",
     prop: "permissionList",
-    width: 250,
     formatter: (row, column, value) => {
       let names = []
       let list = value.halfCheckedKeys || []
