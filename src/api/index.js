@@ -41,8 +41,8 @@ const api = {
   },
 
   // 获取部门列表
-  getDeptList() {
-    return axios.get("/dept/list")
+  getDeptList(params) {
+    return axios.get("/dept/list", { params: params })
   },
 
   // 新增/编辑用户：action：add/edit

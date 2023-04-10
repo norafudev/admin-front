@@ -35,12 +35,9 @@ httpRequest.interceptors.response.use((res) => {
       router.push("/login")
     }, 1500)
     return Promise.reject(TOKEN_INVALID)
-  } else if (code === 20001) {
+  } else if (code === 40001) {
     ElMessage.error("账号或密码错误")
     return Promise.reject("账号或密码错误")
-  } else if (code === 40001) {
-    ElMessage.error("业务请求失败")
-    return Promise.reject("业务请求失败")
   } else {
     return Promise.reject(NETWORK_ERROR)
   }
