@@ -84,7 +84,7 @@ const router = useRouter()
 
 let userInfo = store.state.userInfo
 const logout = () => {
-  store.commit("saveUserInfo", "")
+  store.commit("saveUserInfo", {})
   router.push("/login")
 }
 // 折叠展开侧边栏
@@ -110,7 +110,7 @@ const getNoticeCount = async () => {
 const menuList = ref([])
 const getMenuList = async () => {
   try {
-    menuList.value = await api.getMenuList()
+    menuList.value = await api.getPermissionList()
   } catch (error) {
     console.log(error)
   }

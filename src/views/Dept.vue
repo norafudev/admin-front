@@ -100,6 +100,7 @@
 </template>
 <script>
 import api from "../api"
+import formatDate from "../utils/formatDate"
 export default {
   name: "dept",
   data() {
@@ -119,10 +120,14 @@ export default {
         {
           label: "更新时间",
           prop: "updateTime",
+          formatter: (row, column, cellValue) =>
+            formatDate(new Date(cellValue), "yyyy-MM-dd"),
         },
         {
           label: "创建时间",
           prop: "createTime",
+          formatter: (row, column, cellValue) =>
+            formatDate(new Date(cellValue), "yyyy-MM-dd"),
         },
       ],
       deptList: [],
@@ -175,12 +180,12 @@ export default {
       this.userList = await api.getAllUserList()
     },
     handleUser(val) {
-      console.log("=>", val)
       const [userId, userName, userEmail] = val.split("/")
       Object.assign(this.deptForm, { userId, userName, userEmail })
     },
     handleReset(form) {
       this.$refs[form].resetFields()
+      this.getDeptList()
     },
     handleOpen() {
       this.action = "create"

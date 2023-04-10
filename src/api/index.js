@@ -22,6 +22,12 @@ const api = {
     return axios.get("/menu/list", { baseURL: "/api", params: params })
   },
 
+  // 获取角色权限对应的菜单
+  getPermissionList() {
+    // return axios.get("/menu/permissionList")
+    return axios.get("/menu/permissionList", { baseURL: "/api" })
+  },
+
   // 获取用户列表
   getUserList(params) {
     // return axios.get("/users/list", { params: params })
