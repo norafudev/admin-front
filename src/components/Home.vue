@@ -34,7 +34,7 @@
             <el-icon size="25" color="#90a0d3"><Fold /></el-icon>
           </div>
           <!-- 面包屑 -->
-          <breadcrumb class="breadcrumb" @backHome="resetMenu" />
+          <breadcrumb class="breadcrumb" />
         </div>
         <!-- 2.2 消息提醒，下拉菜单 -->
         <div class="user-info">

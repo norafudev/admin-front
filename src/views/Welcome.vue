@@ -5,7 +5,9 @@
       <div class="title">通用后台管理系统</div>
       <div class="description">Vue3.0+ElementPlus+Koa+MongoDB</div>
     </div>
-    <div class="img"></div>
+    <div class="image">
+      <img src="../assets/images/bg.png" alt="" />
+    </div>
   </div>
 </template>
 
@@ -17,11 +19,15 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding: 0 100px;
+  padding: 0 80px;
   background-color: #fff;
   .content {
-    position: relative;
-    bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 150px;
+    margin: auto;
+    max-width: 500px;
+    min-height: 85vh;
     .sub-title {
       font-size: 30px;
       line-height: 45px;
@@ -39,10 +45,12 @@
       color: #999;
     }
   }
-  .img {
-    background: url(../assets/images/bg.png) no-repeat center/contain;
-    width: 35vw;
-    height: 65vh;
+  .image {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    max-width: 450px;
+    // min-height: 35vh;
   }
 }
 </style>

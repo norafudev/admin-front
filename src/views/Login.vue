@@ -4,13 +4,19 @@
       <el-form :model="user" :rules="rules" status-icon ref="userForm">
         <div class="title">后台管理系统</div>
         <el-form-item prop="userName">
-          <el-input type="text" :prefix-icon="User" v-model="user.userName" />
+          <el-input
+            type="text"
+            :prefix-icon="User"
+            v-model="user.userName"
+            placeholder="管理员账号：admin"
+          />
         </el-form-item>
         <el-form-item prop="userPwd">
           <el-input
             type="password"
             :prefix-icon="View"
             v-model="user.userPwd"
+            placeholder="密码：123"
           />
         </el-form-item>
         <el-form-item>
