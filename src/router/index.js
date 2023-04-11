@@ -73,4 +73,16 @@ const router = createRouter({
   history: createWebHistory(),
 })
 
+// 导航守卫
+router.beforeEach((to, from, next) => {
+  // 检查即将跳转的路径在不在动态路由的路径中
+  let permission = router.getRoutes().find((route) => route.path == to.path)
+  if (permission) {
+    document.title = to.meta.title //修改网页标题
+    next() //路由放行
+  } else {
+    next("/404")
+  }
+})
+
 export default router
