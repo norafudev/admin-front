@@ -7,17 +7,19 @@
         <img src="../assets/images/logo.png" class="avatar" />
         <div>
           <div class="username">{{ userInfo.userName || "游客" }}</div>
-          <div class="role">Admin</div>
+          <div class="role">
+            {{ userInfo.role == 0 ? "管理员" : "用户" }}
+          </div>
         </div>
       </div>
       <!-- 1.2 菜单 -->
       <el-menu
-        :default-active="activeMenu"
         router
         class="nav-menu"
         text-color="#4f4d4d"
         :collapse="isCollapse"
         style="background: transparent"
+        :default-active="route.path"
       >
         <tree-menu :menuList="menuList" />
       </el-menu>
@@ -32,12 +34,13 @@
             <el-icon size="25" color="#90a0d3"><Fold /></el-icon>
           </div>
           <!-- 面包屑 -->
-          <breadcrumb class="breadcrumb" />
+          <breadcrumb class="breadcrumb" @backHome="resetMenu" />
         </div>
         <!-- 2.2 消息提醒，下拉菜单 -->
         <div class="user-info">
           <!-- 消息提醒 -->
-          <el-badge :is-dot="noticeCount != 0" class="notice">
+          <!-- <el-badge :is-dot="noticeCount != 0" class="notice"> -->
+          <el-badge class="notice">
             <el-icon size="25" color="#90a0d3"><Bell /></el-icon>
           </el-badge>
           <!-- 下拉菜单 -->
@@ -73,7 +76,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { useStore } from "vuex"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import api from "../api"
 import TreeMenu from "./TreeMenu.vue"
 import { Avatar, SwitchButton } from "@element-plus/icons-vue"
@@ -81,6 +84,7 @@ import Breadcrumb from "./Breadcrumb.vue"
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 
 let userInfo = store.state.userInfo
 const logout = () => {
@@ -94,18 +98,18 @@ const toggle = () => {
 }
 
 onMounted(() => {
-  getNoticeCount()
+  // getNoticeCount()
   getMenuList()
 })
 // 通知数量
-const noticeCount = ref()
-const getNoticeCount = async () => {
-  try {
-    noticeCount.value = await api.getNoticeCount()
-  } catch (error) {
-    console.log(error)
-  }
-}
+// const noticeCount = ref()
+// const getNoticeCount = async () => {
+//   try {
+//     noticeCount.value = await api.getNoticeCount()
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 // 菜单列表
 const menuList = ref([])
 const getMenuList = async () => {
@@ -118,8 +122,6 @@ const getMenuList = async () => {
     console.log(error)
   }
 }
-// 激活的菜单
-const activeMenu = ref(location.pathname)
 </script>
 
 <style lang="scss">
