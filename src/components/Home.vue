@@ -110,7 +110,10 @@ const getNoticeCount = async () => {
 const menuList = ref([])
 const getMenuList = async () => {
   try {
-    menuList.value = await api.getPermissionList()
+    const { treeMenu, actionList } = await api.getPermissionList()
+    store.commit("saveMenuList", treeMenu)
+    store.commit("saveActionList", actionList)
+    menuList.value = store.state.menuList
   } catch (error) {
     console.log(error)
   }

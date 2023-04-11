@@ -22,7 +22,9 @@
     <div class="base-table">
       <!-- 2.1 操作栏 -->
       <div class="action">
-        <el-button type="primary" @click="handleAdd(1)">创建</el-button>
+        <el-button type="primary" @click="handleAdd(1)" v-has="'menu-create'"
+          >创建</el-button
+        >
       </div>
       <!-- 2.2 列表 -->
       <el-table :data="menuList" row-key="_id">
@@ -37,9 +39,16 @@
         </el-table-column>
         <el-table-column label="操作" width="280" align="center">
           <template #default="scope">
-            <el-button @click="handleAdd(2, scope.row)">新增</el-button>
-            <el-button @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button type="danger" @click="handleDel(scope.row)"
+            <el-button @click="handleAdd(2, scope.row)" v-has="'menu-create'"
+              >新增</el-button
+            >
+            <el-button @click="handleEdit(scope.row)" v-has="'menu-edit'"
+              >编辑</el-button
+            >
+            <el-button
+              type="danger"
+              v-has="'menu-delete'"
+              @click="handleDel(scope.row)"
               >删除</el-button
             >
           </template>

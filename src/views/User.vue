@@ -27,8 +27,15 @@
     <div class="base-table">
       <!-- 2.1 操作栏 -->
       <div class="action">
-        <el-button type="primary" @click="handleCreate">新增</el-button>
-        <el-button type="danger" @click="handleBatchUsers">批量删除</el-button>
+        <el-button type="primary" @click="handleCreate" v-has="'user-create'"
+          >新增</el-button
+        >
+        <el-button
+          type="danger"
+          @click="handleBatchUsers"
+          v-has="'user-batch-delete'"
+          >批量删除</el-button
+        >
       </div>
       <!-- 2.2 列表 -->
       <el-table
@@ -48,13 +55,17 @@
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row)"
+            <el-button
+              size="small"
+              @click="handleEdit(scope.row)"
+              v-has="'user-edit'"
               >编辑</el-button
             >
             <el-button
               size="small"
               type="danger"
               @click="handleDelete(scope.row)"
+              v-has="'user-delete'"
               >删除</el-button
             >
           </template>
