@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router"
 import Home from "../components/Home.vue"
+import api from "../api"
+import generateRoutes from "../utils/generateRoutes"
+import storage from "../utils/storage"
 
 const routes = [
   {
@@ -15,38 +18,6 @@ const routes = [
           title: "欢迎页",
         },
         component: () => import("./../views/Welcome.vue"),
-      },
-      {
-        name: "user",
-        path: "/system/user",
-        meta: {
-          title: "用户管理",
-        },
-        component: () => import("./../views/User.vue"),
-      },
-      {
-        name: "menu",
-        path: "/system/menu",
-        meta: {
-          title: "菜单管理",
-        },
-        component: () => import("./../views/Menu.vue"),
-      },
-      {
-        name: "role",
-        path: "/system/role",
-        meta: {
-          title: "角色管理",
-        },
-        component: () => import("./../views/Role.vue"),
-      },
-      {
-        name: "dept",
-        path: "/system/dept",
-        meta: {
-          title: "部门管理",
-        },
-        component: () => import("./../views/Dept.vue"),
       },
     ],
   },
@@ -73,15 +44,47 @@ const router = createRouter({
   history: createWebHistory(),
 })
 
+// 动态添加路由
+async function loadAsyncRoutes() {
+  let userInfo = storage.getItem("userInfo") || {}
+  if (userInfo.token) {
+    //是否已经登录
+    try {
+      // 动态拉取菜单，不用storage中的菜单，防止被更改
+      const { treeMenu } = await api.getPermissionList()
+      let routes = generateRoutes(treeMenu)
+      const modules = import.meta.glob("../views/*.vue")
+      routes.map((route) => {
+        let url = `../views/${route.name}.vue`
+        route.component = modules[url]
+        router.addRoute("home", route)
+      })
+    } catch (error) {}
+  }
+}
+loadAsyncRoutes()
+
 // 导航守卫
-router.beforeEach((to, from, next) => {
-  // 检查即将跳转的路径在不在动态路由的路径中
-  let permission = router.getRoutes().find((route) => route.path == to.path)
-  if (permission) {
-    document.title = to.meta.title //修改网页标题
-    next() //路由放行
+router.beforeEach(async (to, from, next) => {
+  if (to.name) {
+    if (router.hasRoute(to.name)) {
+      document.title = to.meta.title
+      next()
+    } else {
+      next("/404")
+    }
   } else {
-    next("/404")
+    await loadAsyncRoutes()
+    // 检查即将跳转的路径在不在动态路由的路径中
+    let permission = router.getRoutes().find((route) => {
+      return route.path == to.path
+    })
+    if (permission) {
+      document.title = to.meta.title //修改网页标题
+      next({ ...to, replace: true }) //路由放行
+    } else {
+      next("/404")
+    }
   }
 })
 
