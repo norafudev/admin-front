@@ -160,6 +160,7 @@ const userList = ref()
 const pager = reactive({
   pageNum: 1,
   pageSize: 10,
+  total: 15,
 })
 const columns = [
   { label: "用户Id", prop: "userId" },
